@@ -21,4 +21,12 @@ async def add_task(
 @router.get('')
 async def get_tasks() -> list[STask]:
     tasks = await TaskRepository.find_all()
-    return {'tasks': tasks}
+    return tasks
+
+
+@router.delete('')
+async def delete_task(
+    task_id: int
+) -> int:
+    await TaskRepository.delete_one(task_id)
+    return task_id

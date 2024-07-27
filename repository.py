@@ -1,6 +1,6 @@
 from database import new_session, TaskOrm
 from schemas import STaskAdd, STask
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 class TaskRepository():
     @classmethod
@@ -23,3 +23,12 @@ class TaskRepository():
             task_models = result.scalars().all()
             tasks_schemas = [STask.model_validate(task_model) for task_model in task_models]
             return tasks_schemas
+    
+    
+    @classmethod
+    async def delete_one(cls, del_id:int) -> int:
+        async with new_session() as session:
+            task_to_del = delete(TaskOrm).where(TaskOrm.id == del_id)
+            await session.execute(task_to_del)
+            await session.commit()
+            return del_id
